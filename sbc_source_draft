@@ -1,0 +1,43 @@
+import requests
+import random
+import time
+
+# ThingSpeak API endpoint
+url = "https://api.thingspeak.com/update.json"
+
+# ThingSpeak API key and channel ID
+api_key = "4JDODDZC6QCB0JHS"
+channel_id = "2141694"
+
+# Function to generate random sensor readings
+def generate_sensor_data():
+    temperature = round(random.uniform(20, 30), 2)
+    humidity = round(random.uniform(40, 60), 2)
+    return temperature, humidity
+
+# Main loop to send data to ThingSpeak
+while True:
+    temperature, humidity = generate_sensor_data()
+
+    # Prepare the payload with the data to send
+    payload = {
+        "api_key": api_key,
+        "field1": str(temperature),
+        "field2": str(humidity)
+    }
+
+    try:
+        # Send HTTP POST request to ThingSpeak
+        response = requests.post(url, params=payload)
+
+        # Check response status
+        if response.status_code == 200:
+            print("Data sent successfully:", temperature, humidity)
+        else:
+            print("Error sending data. Status code:", response.status_code)
+
+    except requests.exceptions.RequestException as e:
+        print("Error sending data:", str(e))
+
+    # Delay between each data transmission (in seconds)
+    time.sleep(30)
