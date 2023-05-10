@@ -1,0 +1,36 @@
+microcontroller code to read data from sensors
+from options import Options
+from time import *
+import math
+from physical import *
+from gpio import *
+from environment import Environment
+from ioeclient import IoEClient
+from pyjs import *
+
+
+
+def setup ():
+    pinMode(0, OUTPUT);
+
+
+
+def loop ():
+    waterLevel = math.floor(js_map(analogRead(A0), 0, 1023, 0, 20) + 0.5)        # var waterLevel
+    temperature = math.floor(js_map(analogRead(A1), 0, 1023, -100, 100) + 0.5)   # var temperature
+    humidityLevel = math.floor(js_map(analogRead(A2), 0, 1023, 0, 100) + 0.5)     # var humidity
+    waterPresence = (digitalRead(2))
+    if waterLevel >= 5:
+        digitalWrite(0, HIGH)
+        customWrite(1, (waterLevel, temperature, humidityLevel, waterPresence));
+    else:
+        digitalWrite(0, LOW)
+        customWrite(1, (waterLevel, temperature, humidityLevel,waterPresence));
+    delay(1000)
+
+
+
+if __name__ == "__main__":
+    setup()
+    while True:
+        loop()
